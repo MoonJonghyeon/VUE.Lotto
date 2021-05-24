@@ -35,7 +35,8 @@ function getWinNumber() {
              winNumbers: getWinNumber(),
              redo: false,
              bonus : null,
-             winBalls: [],            
+             winBalls: [],
+             result: ''           
          }
      },
      computed: {
