@@ -6,7 +6,7 @@
     </div>
     <div>보너스</div>
     <lotto-ball v-if = 'bonus' :number = 'bonus'></lotto-ball>
-    <input type="button" value = '한번 더!' v-if = 'redo'>
+    <input type="button" value = '한번 더!' v-if = 'redo' @click = 'onClickRedo'>
 </div>
 </template>
 
@@ -26,6 +26,8 @@ function getWinNumber() {
     return [...winNumbers, bonusNumber];
 }
 
+const timeouts = [];
+
  export default {
      components: {
          'lotto-ball' : LottoBall,
@@ -36,39 +38,44 @@ function getWinNumber() {
              redo: false,
              bonus : null,
              winBalls: [],
-             result: ''           
          }
      },
      computed: {
          
      },
      methods: {
-         
+         showBalls() {
+             for (let i = 0; i < this.winNumbers.length - 1; i++) {
+             timeouts[i] = setTimeout(() => {
+                 this.winBalls.push(this.winNumbers[i]);
+                 }, (i + 1) * 1000)
+                 console.log(this.winNumbers)
+                 }
+             timeouts[6] = setTimeout(() => {
+                 this.bonus = this.winNumbers[6];
+                 this.redo = true;
+                 }, 7000);
+                 },
+         onClickRedo() {
+             this.winNumbers = getWinNumber();
+             this.winBalls = [];
+             this.bonus = null;
+             this.redo = false;
+             this.showBalls();
+         }
      },
      mounted() {
-         for (let i = 0; i < this.winNumbers.length - 1; i++) {
-             setTimeout(() => {
-                 this.winBalls.push(this.winNumbers[i]);
-             }, (i + 1) * 1000)
-             console.log(this.winNumbers)
-         }
-         setTimeout(() => {
-             this.bonus = this.winNumbers[6];
-             this.redo = true;
-         }, 7000);
+         this.showBalls();
      },
      beforeDestroy() {
          console.log('beforeDestroy');
-     },
-     watch: {
+         timeouts.forEach((t) => {
+             clearTimeout(t);
+         });
      },
  }
 </script>
 
 <style scoped>
-#computer {
-    width: 142px;
-    height: 200px;
-    background-position: 0 0;
-}
+
 </style>
